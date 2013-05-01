@@ -3,22 +3,200 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>CS609 -- Project</title>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<style type="text/css">
+body {
+	font-size: 20px;
+}
+button.link,input[type=button].link {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 17px;
+	color: #ffffff;
+	padding: 11px 22px;
+	background: -moz-linear-gradient(
+		top,
+		#0081cc 0%,
+		#0081cc);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#0081cc),
+		to(#0081cc));
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	border: 0px solid #0081cc;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0),
+		inset 0px 0px 28px rgba(000,000,000,0.1);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0),
+		inset 0px 0px 28px rgba(000,000,000,0.1);
+	box-shadow:
+		0px 1px 3px rgba(000,000,000,0),
+		inset 0px 0px 28px rgba(000,000,000,0.1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0),
+		0px 1px 0px rgba(255,255,255,0);
+}
+
+</style>
 </head>
 <body>
-	<p>simple XML query evaluation engine -- Renjie Weng</p>
+<center><table><tr>
+<td>
+	<div align="center">
+	<p>simple XML query evaluation engine -- Renjie Weng <a href="#">&lt;rweng@steven.edu&gt;</a></p>
+	<!-- <input type="button" id="dbControl" value="Sedna DB Switcher" onClick="SwithOnOff()" /> -->
+	<input type="image" id="dbIndicator" src="/XQuery/pic/green_light.png" width="50" height="50" />
+	<p>Sedna XML Database is running...</p>
+	</div>
+	<div>
+	Collections: 
+	<input type="image" src="/XQuery/pic/view_refresh.png" id="refresh" onClick="RefreshCol()" width="30" height="30"/>
+	<input type="text" id="refreshWait" readonly="readonly" style="font-size:15px;color:orange;outline:none;border-color:transparent;width:300px;"/>
+	</div>
+	<div id="cols" style="text-align:left;"></div> 
 	
-	<FRAMESET COLS="165,*" BORDER=0 FRAMEBORDER=0 FRAMESPACING=0>
-	  <FRAME SRC="/HelloSession" NAME="Main">
-	  <NOFRAMES>
-	    <BODY>
-	      Source code archive for Core Web Programming 
-	      (Prentice Hall and Sun Microsystems Press).
-	      Your browser doesn't support frames (what is this, the 20th century?). 
-	      Please see the <A HREF="/HelloSession">table of contents page</A>
-	      for a non-frames version.
-	    </BODY>
-	  </NOFRAMES>
-	</FRAMESET>
+	<input type="text" id="newColName" />
+	<input type="image" src="/XQuery/pic/add.png" id="newCol" onClick="CreateNewCol()" width="30" height="30"/> Create New Collection <br />
+	<p3>Current Collection: </p3><input type="text" id="curCollection" readonly="readonly" style="font-size:20px;color:blue;outline:none;border-color:transparent;"/>
+	<div id="docs" style="border:2px solid;border-radius:1px;border-color:blue;">
+	</div>
+	
+	<form id="uploadForm" enctype="multipart/form-data" style="display:none;">
+	<input type="file" id="file" name="file" />
+	<input type="button" id="upload" value="Upload" />
+	<input type="text" id="uploadResult" readonly="readonly" style="font-size:20px;color:green;outline:none;border-color:transparent;width:auto;"/>
+	</form>
+	<br />
+	<div style="text-align:right;">
+	<button class="link" onClick="parent.location='/XQuery/XQuery.html'">GO TO XQuery</button>
+	</div>
+</td></tr></table></center>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			RefreshCol();
+		});
+		
+		function SwithOnOff() {
+			/*
+			$.get('/XQuery/SednaController?type=START', function(data) {
+				alert('Load was performed.');
+			});
+			*/
+		}
+		
+		function RefreshCol() {
+			$("#curCollection").val("");
+			$("#docs").html("");
+			$("#uploadForm").hide();
+			$.get('/XQuery/SednaController?type=COL', function(data) {
+				var col = data;
+				var cols = col.split(",");
+				$("#cols").html("");
+				$.each(cols, function(key,value) {
+					var colLink = $("<a href=\"#\">"+value+"</a>").click(function(e) {
+									ListDocs(value);
+									});	
+					$("#cols").append(colLink);
+					$("#cols").append("&nbsp;&nbsp;");
+				});
+			});
+		}
+		
+		function CreateNewCol() {
+			var newColName = $("#newColName").val();
+			$("#docs").html("");
+			$("#uploadForm").hide();
+			$("#newColName").val("");
+			$("#refreshWait").val("Wait for creating new collection...");
+			if(newColName != "") {
+				$.get('/XQuery/SednaController?type=NEW&col='+newColName, function(data) {
+					var col = data;
+					var cols = col.split(",");
+					$("#cols").html("");
+					/*$.each(cols, function(key,value) {
+						var colLink = $("<a href=\"#\">"+value+"</a>").click(function(e) {
+										ListDocs(value);
+										});	
+						$("#cols").append(colLink);
+						$("#cols").append("&nbsp;&nbsp;");
+					});*/
+				})
+				.success(function(){
+					RefreshCol();
+					$("#refreshWait").val("");
+				});
+			}
+		}
+		
+		function ListDocs(colName) {
+			$.get('/XQuery/SednaController?type=DOC&col='+colName, function(data) {
+				var docs = data;
+				var doc = docs.split(",");
+				$("#docs").html("");
+				$.each(doc, function(key,value) {
+					var colLink = $("<a>"+value+"</a>").attr({target:'_blank',
+	                   href: '/XQuery/LoadFile?col='+colName+'&doc='+value});
+					//.click(function(e) {
+					//	Download(value);
+					//});	
+					$("#docs").append(colLink);
+					$("#docs").append("<br />");
+				});
+				//var upload = $("<input id=\"files\" type=\"file\" />");
+				//$("#docs").append(upload);
+				var upload=$("")
+			});
+			$("#curCollection").val(colName);
+			
+
+			$("#uploadForm").show();
+			$(':file').change(function(){
+				var file = this.files[0];
+				name = file.name;
+				size = file.size;
+				type = file.type;
+				// validation
+			});
+			
+			$("#upload").click(function(){
+				var filename = $("#file").val();
+				var file_data = $("#file").attr("file");   // Getting the properties of file from file field
+			    var form_data = new FormData($('form')[0]);                  // Creating object of FormData class
+			    //form_data.append("file", file_data)              // Appending parameter named file with properties of file_field to form_data
+			    $.ajax({  //added an ID to your form's submit button
+				    type: "post",
+				    url: "/XQuery/LoadFile?col="+colName,
+				    cache: false,
+	                processData: false,
+	                data: form_data,
+	                contentType: false,
+	                success: function (data) {
+	                    $("#uploadResult").val(data).fadeToggle("slow").fadeOut("slow");
+	                    ListDocs(colName);
+	                }
+				});
+			});
+			
+			/*$("#upload").click( function() {
+				var file_data = $("#avatar").prop("files")[0];   // Getting the properties of file from file field
+				var form_data = new FormData();                  // Creating object of FormData class
+				form_data.append("file", file_data)              // Appending parameter named file with properties of file_field to form_data
+				$.ajax({
+	                url: "/XQuery/LoadFile",
+	                dataType: 'script',
+	                cache: false,
+	                contentType: false,
+	                processData: false,
+	                data: form_data,                         // Setting the data attribute of ajax with file_data
+	                type: 'post'
+		       })
+			});*/
+		}
+		
+	</script>
+	
 </body>
 
 

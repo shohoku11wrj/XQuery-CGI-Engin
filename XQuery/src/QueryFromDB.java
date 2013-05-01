@@ -55,18 +55,30 @@ public class QueryFromDB extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/xml;charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String expression = request.getParameter("expr");
+		String expression = request.getParameter("expr").trim();
+		String colName = request.getParameter("col").trim();
 		//XQuery
 		XQDataSource xqd = new SednaXQDataSource();
 		try {
 			xqd.setProperty("serverName", "localhost");
-			xqd.setProperty("databaseName", "test");
+			xqd.setProperty("databaseName", colName);
 		    
-			XQConnection xqc = xqd .getConnection("SYSTEM","MANAGER");
+			XQConnection xqc = xqd.getConnection("SYSTEM","MANAGER");
 			XQExpression xqe = xqc.createExpression();
+			//TODO
+			// calculate query time
+			out.append("<result>");
 			XQSequence xqs = xqe.executeQuery(expression); // execution method 1: tp outputStream
-			xqs.writeSequence(out, null);
-			
+			if (xqs.next()) {
+				xqs.writeSequence(out, null);
+			}
+			else {
+				// This category consists:
+				// 1. no query result
+				// 2. plain string query , repsonse plain string
+				out.println("No data found corresponding to this query.");
+			}
+			out.append("</result>");
 			/* 
 			 * Do XML format in Server side
 			 */
@@ -97,13 +109,14 @@ public class QueryFromDB extends HttpServlet {
 		} 
 		catch (XQException xqe) { //TODO Check this Exception, before run XQuery
 			// file does not exist error
-			out.println("The SENDA db has not runned.");
-			System.err.println("The SENDA db has not runned.");
+			//TODO
+			// wrong query syntax, eg: 1+1
+			out.println(xqe.getMessage());
 			xqe.printStackTrace();
 		}
 		catch (Exception e) {
 			// file does not exist error
-			out.write("The SENDA db has not runned.");
+			out.write("Failed error occured, connect the admin to handle it.");
 			// syntax error
 			
 			e.printStackTrace();

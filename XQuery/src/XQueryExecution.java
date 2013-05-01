@@ -18,9 +18,13 @@ public class XQueryExecution {
 			XQConnection xqc = xqs .getConnection("SYSTEM","MANAGER");
 			XQExpression xqe = xqc.createExpression();
 			//XQPreparedExpression xqp = xqc.prepareExpression("LOAD '../data/test_files/test.xml' 'test.xml'");
+
+			long startTime = System.nanoTime();
 			XQSequence xqjs = xqe.executeQuery(
 					"for $a in doc('test')/db/person let $b:=$a/first where $b='Renjie' return $b");
-			
+        	long endTime = System.nanoTime();
+	        long execTime = endTime - startTime;
+	        System.out.println(execTime);
 			//XQResultSequence xqr = xqe.executeQuery(".//person[0]");
 			//.writeSequence(System.out, null);
 			xqc.close(); 

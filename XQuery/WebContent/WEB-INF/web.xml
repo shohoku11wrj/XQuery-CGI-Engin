@@ -10,27 +10,35 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <servlet-name>HelloSession</servlet-name>
-    <servlet-class>HelloSession</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>HelloSession</servlet-name>
-    <url-pattern>/HelloSession</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>PrimeNumbers</servlet-name>
-    <servlet-class>PrimeNumbers</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>PrimeNumbers</servlet-name>
-    <url-pattern>/PrimeNumbers</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <servlet-name>QueryFroDB</servlet-name>
     <servlet-class>QueryFroDB</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>QueryFroDB</servlet-name>
     <url-pattern>/QueryFroDB</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>SednaController</servlet-name>
+    <servlet-class>SednaController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SednaController</servlet-name>
+    <url-pattern>/SednaController</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>LoadFile</servlet-name>
+    <servlet-class>LoadFile</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoadFile</servlet-name>
+    <url-pattern>/LoadFile</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>XPathQuery</servlet-name>
+    <servlet-class>XPathQuery</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>XPathQuery</servlet-name>
+    <url-pattern>/XPathQuery</url-pattern>
   </servlet-mapping>
 </web-app>

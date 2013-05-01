@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h>Mangement</h><br /><br />
+
+<li>1. new collection, show dir;</li>
+
+<li>2. choose collection;</li>
+
+<li>3. upload document, show dir in new collection;</li>
+
+<li>4. download document;</li>
+
+<p>--------------</p>
+
+<h>XQuery</h><br /><br />
+
+<li>1. retrive whole xml document of test.xml</li>
+
+<p>fn:doc("test")</p>
+
+<li>2. </li>
+
+<p>for $a in doc('test')/db/person let $b:=$a/first where $b='Renjie' return $b</p>
+
+<li>3. no collection alert, no query expression alert</li>
+
+<li>4. for $b in doc("auction")/site/regions return count ($b//item)</li>
+
+<li>5. Error sample</li>
+
+<li>6. for $b in doc("book.xml") return $b</li>
+
+<li>7. for $b in doc("book.xml")//price return &lt;price&gt;{$b}&lt;/price&gt;</li>
+
+<li>8. for $b in doc("book.xml")//book where $b/price &lt; 6 return &lt;title&gt;{$b/title}&lt;/title&gt;</li>
+
+<li>9. How many sold items cost more than 40? </li>
+<p>count(for $i in doc("auction")/site/closed_auctions/closed_auction where  $i/price/text() >= 40 return $i/price)</p>
+
+<p>--------------</p>
+
+<h>XPath</h><br /><br />
+
+<li>1. do XPath, do XPath on Index, show dir in new collection;</li>
+
+<li>2. //book/price/text()</li>
+
+<li>3. show no collection/document alert; show no path expression alert;</li>
+
+<li>4. SHOW different between XPath and XPath on INDEX</li>
+
+<p>book.xml  //book[3]/title/text()</p>
+
+<p>auction.xml /site//text/text()</p>
+
+</body>
+</html>
