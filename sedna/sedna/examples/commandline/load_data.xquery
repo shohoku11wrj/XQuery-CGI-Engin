@@ -1,1 +1,0 @@
-LOAD "auction.xml" "auction"
